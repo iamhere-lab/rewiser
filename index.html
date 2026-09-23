@@ -343,6 +343,21 @@
           <div class="st-scale"><span>400</span><span>1600</span></div>
           <input class="st-range" id="stRange" type="range" min="400" max="1600" step="10" value="1180" aria-label="Your current Digital SAT score" />
           <p class="st-msg" id="stMsg">That's <b id="stGapTxt">+320 points</b> to your 1500 target — our job is to close it.</p>
+
+          <!-- AP score slider -->
+          <div style="border-top:1px solid var(--line);margin:20px 0 18px;"></div>
+          <div class="st-head">
+            <span class="q">What is your AP Exam Score?</span>
+            <span class="st-now" id="apNow">3</span>
+          </div>
+          <div class="st-bar">
+            <div class="st-fill" id="apFill"></div>
+            <div class="st-gap" id="apGap"></div>
+            <div class="st-target"><span>5 target</span></div>
+          </div>
+          <div class="st-scale"><span>0</span><span>5</span></div>
+          <input class="st-range" id="apRange" type="range" min="0" max="5" step="1" value="3" aria-label="Your current AP exam score" />
+          <p class="st-msg" id="apMsg">That's <b>+2 points</b> to a perfect 5 — our job is to close it.</p>
         </div>
 
         <div class="hero-cta-row">
@@ -729,6 +744,33 @@
   }
   range.addEventListener("input", renderScore);
   renderScore();
+
+  /* ----- AP score track ----- */
+  const AP_MIN = 0, AP_MAX = 5, AP_TARGET = 5;
+  const apRange = document.getElementById("apRange");
+  const apFill  = document.getElementById("apFill");
+  const apGap   = document.getElementById("apGap");
+  const apNow   = document.getElementById("apNow");
+  const apMsg   = document.getElementById("apMsg");
+  const apPct = v => ((v - AP_MIN) / (AP_MAX - AP_MIN)) * 100;
+  function renderAP(){
+    const v = parseInt(apRange.value, 10);
+    const pCur = apPct(v), pTar = apPct(AP_TARGET);
+    apNow.textContent = v;
+    apFill.style.width = pCur + "%";
+    if (v < AP_TARGET){
+      const d = AP_TARGET - v;
+      apGap.style.left = pCur + "%";
+      apGap.style.width = (pTar - pCur) + "%";
+      apGap.style.display = "block";
+      apMsg.innerHTML = "That's <b>+" + d + (d === 1 ? " point" : " points") + "</b> to a perfect 5 — our job is to close it.";
+    } else {
+      apGap.style.display = "none";
+      apMsg.innerHTML = "You're already at a <b>5</b> — let's make sure it stays that way.";
+    }
+  }
+  apRange.addEventListener("input", renderAP);
+  renderAP();
 
   /* ----- FAQ accordion ----- */
   document.querySelectorAll(".faq").forEach(item => {
